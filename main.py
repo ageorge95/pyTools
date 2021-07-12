@@ -129,9 +129,9 @@ def monitor_internet_conn_status():
                                                                                       conn_status_new,
                                                                                       (str(datetime.timedelta(seconds=(datetime.datetime.now() - relative_datetime).seconds)))))
 
-            time.sleep(1)
+            time.sleep(10)
         else:
-            time.sleep(1)
+            time.sleep(10)
 
 def monitor_power_disconn_status():
 
@@ -163,9 +163,9 @@ def monitor_power_disconn_status():
                                                                               power_status_new,
                                                                               (str(datetime.timedelta(seconds=(datetime.datetime.now() - relative_datetime).seconds)))))
 
-            time.sleep(1)
+            time.sleep(10)
         else:
-            time.sleep(1)
+            time.sleep(10)
 
 def monitor_win_update_disabler():
 
@@ -178,7 +178,7 @@ def monitor_win_update_disabler():
         if win_update_disabler_switch_variable.get() == 'on':
             T.config(state='normal')
             # output = os.system('cmd /c "sc stop "wuauserv""')
-            output = subprocess.call('cmd /c "sc stop "wuauserv""')
+            output = subprocess.call('sc stop "wuauserv"')
             if output == 5:
                 T.insert('1.0', '{}: Run me with admin priviledges !\n'.format(str(datetime.datetime.now())))
             else:
@@ -192,7 +192,7 @@ def monitor_win_update_disabler():
             T.config(state='disabled')
             time.sleep(60*60)
         else:
-            time.sleep(5)
+            time.sleep(10)
 
 threading.Thread(target=monitor_win_update_disabler, args=(), daemon=True).start()
 threading.Thread(target=monitor_internet_conn_status, args=(), daemon=True).start()
