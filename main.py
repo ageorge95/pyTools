@@ -7,7 +7,8 @@ import threading,\
     sys, \
     tkinter.ttk, \
     requests,\
-    psutil
+    psutil,\
+    os
 
 window = Tk()
 window.title("pyTools")
@@ -93,6 +94,16 @@ on_button = Radiobutton(window,
 off_button.grid(column=0, row=12)
 on_button.grid(column=1, row=12)
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 def monitor_internet_conn_status():
 
     relative_datetime = datetime.datetime.now()
@@ -116,12 +127,12 @@ def monitor_internet_conn_status():
 
                 if conn_status_new == 'ONLINE':
                     mixer.init()
-                    mixer.music.load("res/int_conn_online.mp3")
+                    mixer.music.load(os.path.join(resource_path('res'), "int_conn_online.mp3"))
                     mixer.music.play()
                     print('ONLINE connection')
                 elif conn_status_new == 'OFFLINE':
                     mixer.init()
-                    mixer.music.load("res/int_conn_offline.mp3")
+                    mixer.music.load(os.path.join(resource_path('res'), "int_conn_offline.mp3"))
                     mixer.music.play()
                     print('OFFLINE connection')
 
@@ -150,12 +161,12 @@ def monitor_power_disconn_status():
 
                 if power_status_new == 'AC-POWER':
                     mixer.init()
-                    mixer.music.load("res/switched_to_ac.mp3")
+                    mixer.music.load(os.path.join(resource_path('res'), "switched_to_ac.mp3"))
                     mixer.music.play()
                     print('AC power')
                 elif power_status_new == 'BATT-POWER':
                     mixer.init()
-                    mixer.music.load("res/switched_to_batt.mp3")
+                    mixer.music.load(os.path.join(resource_path('res'), "switched_to_batt.mp3"))
                     mixer.music.play()
                     print('BATTERY power')
 
