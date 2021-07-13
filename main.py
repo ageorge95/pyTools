@@ -6,7 +6,7 @@ import threading,\
     subprocess,\
     sys, \
     tkinter.ttk, \
-    requests,\
+    urllib.request,\
     psutil,\
     os
 
@@ -113,12 +113,10 @@ def monitor_internet_conn_status():
 
         if internet_conn_check_switch_variable.get() == 'on':
 
-            url = "http://www.kite.com"
-            timeout = 5
             try:
-                requests.get(url, timeout=timeout)
+                urllib.request.urlopen('http://google.com') #Python 3.x
                 conn_status_new = 'ONLINE'
-            except (requests.ConnectionError, requests.Timeout) as exception:
+            except:
                 conn_status_new = 'OFFLINE'
 
             if conn_status_new != conn_status:
