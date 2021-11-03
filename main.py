@@ -6,13 +6,17 @@ from pygame import mixer
 import threading,\
     time,\
     datetime,\
-    subprocess,\
     sys, \
     tkinter.ttk, \
     urllib.request,\
     psutil,\
     os,\
     logging
+from subprocess import CREATE_NEW_CONSOLE,\
+    STARTUPINFO,\
+    STARTF_USESHOWWINDOW,\
+    DEVNULL,\
+    call
 
 # #################################################
 # ########### Logger config #######################
@@ -118,8 +122,12 @@ def monitor_power_disconn_status():
 
 def monitor_win_update_disabler():
 
+    info = STARTUPINFO()
+    info.dwFlags = STARTF_USESHOWWINDOW
+    info.wShowWindow = 0  # 0-HIDDEN, 6-MINIMSED
+
     T.config(state='normal')
-    T.insert('1.0', '{}: Delaying the startup by 10sec with a loop each 1h !\n'.format(str(datetime.datetime.now())))
+    T.insert('1.0', '{}: Delaying the startup by 10sec with a loop each 5min !\n'.format(str(datetime.datetime.now())))
     T.config(state='disabled')
     time.sleep(10)
 
@@ -127,12 +135,16 @@ def monitor_win_update_disabler():
         if win_update_disabler_switch_variable.get() == 'on':
             T.config(state='normal')
             # output = os.system('cmd /c "sc stop "wuauserv""')
-            output = subprocess.call('sc stop "wuauserv"')
+            output = call('sc stop "wuauserv"',
+                                  creationflags = CREATE_NEW_CONSOLE,
+                                  startupinfo = info)
             if output == 5:
                 T.insert('1.0', '{}: Run me with admin priviledges !\n'.format(str(datetime.datetime.now())))
                 logger.error('Cannot disable windows update. Run with admin priviledges.')
             else:
-                output = subprocess.call('sc config "wuauserv" start=disabled')
+                output = call('sc config "wuauserv" start=disabled',
+                                  creationflags = CREATE_NEW_CONSOLE,
+                                  startupinfo = info)
                 if output != 0:
                     T.insert('1.0', '{}: There was an issue changing the service startup type. Exit code {} !\n'.format(str(datetime.datetime.now()),
                                                                                                                         output))
@@ -142,7 +154,7 @@ def monitor_win_update_disabler():
                     logger.info('Windows update service disabled.')
             T.delete('100.0', '101.0')
             T.config(state='disabled')
-            time.sleep(60*60)
+            time.sleep(60*5)
         else:
             time.sleep(10)
 
