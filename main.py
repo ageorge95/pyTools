@@ -53,11 +53,18 @@ def monitor_internet_conn_status():
 
         if internet_conn_check_switch_variable.get() == 'on':
 
+            # double confirmation
             try:
-                urllib.request.urlopen('http://google.com') #Python 3.x
+                urllib.request.urlopen(url='http://google.com',
+                                       timeout=1)
                 conn_status_new = 'ONLINE'
             except:
-                conn_status_new = 'OFFLINE'
+                try:
+                    urllib.request.urlopen(url='http://google.com',
+                                           timeout=1)
+                    conn_status_new = 'ONLINE'
+                except:
+                    conn_status_new = 'OFFLINE'
 
             previous_state_time_sec = (datetime.datetime.now() - relative_datetime).seconds
 
